@@ -1,0 +1,13 @@
+flask
+flask-admin
+flask-BabelEx
+flask-sqlalchemy
+flask-security
+flask-login
+flask-mail
+flask-Migrate
+flask-principal
+flask-wtf
+email-validator
+psycopg2-binary
+bcrypt

@@ -1,0 +1,37 @@
+version: "3"
+
+services:
+  db:
+    image: postgres
+    # restart: always
+    environment:
+      POSTGRES_PASSWORD: Nam0Buddha!a
+      POSTGRES_USER: dbadmin
+    ports: 
+      - "5432:5432"
+
+  # flask:
+  #   build:
+  #     context: ./flask
+  #   volumes:
+  #     - ./flask:/app
+  #   ports: 
+  #     - "5000:5000"
+  #   depends_on:
+  #     - db
+
+  pgweb:
+    image: sosedoff/pgweb
+    ports:
+      - "8081:8081"
+    environment:
+      - DATABASE_URL=postgres://dbadmin:Nam0Buddha!a@db:5432/dbadmin?sslmode=disable
+      # - POSTGRES=db
+      # - PORT=5432
+      # - USER=dbadmin
+      # - POSTGRES_PASSWORD=Nam0Buddha!a
+      # - POSTGRES_DB=dbadmin
+      # - SSL=disable
+    depends_on:
+      - db
+  
