@@ -12,7 +12,8 @@
       "env": {
         "FLASK_APP": "app.py",
         "FLASK_ENV": "development",
-        "FLASK_DEBUG": "1"
+        "FLASK_DEBUG": "1",
+        "SQLALCHEMY_DATABASE_URI": "postgres://dbadmin:Nam0Buddha!a@db:5432"
       },
       "args": [
         "run",

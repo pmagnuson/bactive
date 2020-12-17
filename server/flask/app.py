@@ -1,3 +1,4 @@
+import os
 from flask import Flask, redirect, render_template, url_for
 from flask_admin import Admin
 from flask_admin import helpers as admin_helpers
@@ -7,7 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
 from database import db_session, init_db
-from models import User, Role
+from models import User, Role, RolesUsers
 
 # Instantiate the Flask application with configurations
 app = Flask(__name__)
@@ -31,7 +32,14 @@ app.config['SECURITY_SEND_REGISTER_EMAIL'] = False
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://localhost/flask-admin-flask-security-db'
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://dbadmin:Nam0Buddha!a@db:5432'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://dbadmin:Nam0Buddha!a@127.0.0.1:5432'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://dbadmin:Nam0Buddha!a@127.0.0.1:5432'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
+
+for s in sorted(os.environ):
+    print(f'{s} : {os.environ[s]}')
+
+print(f"os environ uri: {os.environ['SQLALCHEMY_DATABASE_URI']}")
+print(f"database uri: {app.config['SQLALCHEMY_DATABASE_URI']}")
 
 # Instantiate the database
 db = SQLAlchemy(app)
@@ -39,15 +47,30 @@ migrate = Migrate(app, db)
 
 
 class UserModelView(ModelView):
-    def is_accessible(self):
-        return (current_user.is_active and
-                current_user.is_authenticated)
+    # def is_accessible(self):
+    #     return (current_user.is_active and
+    #             current_user.is_authenticated)
 
-    def _handle_view(self, name):
-        if not self.is_accessible():
-            return redirect(url_for('security.login'))
+    # def _handle_view(self, name):
+    #     if not self.is_accessible():
+    #         return redirect(url_for('security.login'))
 
-    column_list = ['email', 'password', 'roles']
+    column_list = ['email', 'roles', 'last_login_at']
+    column_exclude_list = ['password']
+    form_excluded_columns = (
+        'last_login_at', 'current_login_at', 'login_count')
+
+
+class RolesUsersModelView(ModelView):
+    column_list = ['user_id', 'role_id']
+    form_columns = ['user_id', 'role_id']
+    column_hide_backrefs = False
+    # form_ajax_refs = {
+    #     'user': {
+    #         'fields': ['email'],
+    #         # 'page_size': 10
+    #     }
+    # }
 
 
 # Create a datastore and instantiate Flask-Security
@@ -60,10 +83,11 @@ security = Security(app, user_datastore)
 @app.before_first_request
 def create_user():
     init_db()
-    user_datastore.create_user(email='admin', password='admin')
-    user_datastore.create_role(name='admin', description='global admin access')
-    user_datastore.create_role(
-        name='sanghaAdmin', description='admin access for one Sangha')
+    # user_datastore.create_user(
+    #     email='phillmag@gmail.com', password='bmw323Is#b')
+    # user_datastore.create_role(name='admin', description='global admin access')
+    # user_datastore.create_role(
+    #     name='sanghaAdmin', description='admin access for one Sangha')
     db.session.commit()
 
 
@@ -74,8 +98,11 @@ admin = Admin(app, name='Admin',
 
 
 # Add administrative views to Flask-Admin
-admin.add_view(ModelView(User, db.session))
+# admin.add_view(ModelView(User, db.session))
+admin.add_view(UserModelView(User, db.session))
 admin.add_view(ModelView(Role, db.session))
+admin.add_view(RolesUsersModelView(RolesUsers, db.session))
+# admin.add_view(ModelView(RolesUsers, db.session))
 
 # Add the context processor
 @security.context_processor

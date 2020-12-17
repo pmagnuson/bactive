@@ -10,15 +10,19 @@ services:
     ports: 
       - "5432:5432"
 
-  # flask:
-  #   build:
-  #     context: ./flask
-  #   volumes:
-  #     - ./flask:/app
-  #   ports: 
-  #     - "5000:5000"
-  #   depends_on:
-  #     - db
+  flask:
+    build:
+      context: ./flask
+    environment:
+      FLASK_ENV: development
+      FLASK_DEBUG: 1
+      SQLALCHEMY_DATABASE_URI: postgres://dbadmin:Nam0Buddha!a@db:5432
+    volumes:
+      - ./flask:/app
+    ports: 
+      - "5000:5000"
+    depends_on:
+      - db
 
   pgweb:
     image: sosedoff/pgweb

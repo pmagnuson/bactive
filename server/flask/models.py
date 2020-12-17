@@ -18,6 +18,9 @@ class Role(Base, RoleMixin):
     name = Column(String(80), unique=True)
     description = Column(String(255))
 
+    def __repr__(self):
+        return f'{self.name}'
+
 
 class User(Base, UserMixin):
     __tablename__ = 'user'
@@ -34,3 +37,6 @@ class User(Base, UserMixin):
     confirmed_at = Column(DateTime())
     roles = relationship('Role', secondary='roles_users',
                          backref=backref('users', lazy='dynamic'))
+
+    def __repr__(self):
+        return f'{self.email}'
