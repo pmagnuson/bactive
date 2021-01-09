@@ -35,11 +35,11 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://dbadmin:Nam0Buddha!a@127.0.0.1:5432'
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['SQLALCHEMY_DATABASE_URI']
 
-for s in sorted(os.environ):
-    print(f'{s} : {os.environ[s]}')
+# for s in sorted(os.environ):
+#     print(f'{s} : {os.environ[s]}')
 
-print(f"os environ uri: {os.environ['SQLALCHEMY_DATABASE_URI']}")
-print(f"database uri: {app.config['SQLALCHEMY_DATABASE_URI']}")
+# print(f"os environ uri: {os.environ['SQLALCHEMY_DATABASE_URI']}")
+# print(f"database uri: {app.config['SQLALCHEMY_DATABASE_URI']}")
 
 # Instantiate the database
 db = SQLAlchemy(app)
